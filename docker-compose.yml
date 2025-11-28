@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: kino_bot_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: kino_bot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - kino_network   
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build: .
+    container_name: kino_bot
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DATABASE_URL=postgresql+asyncpg://postgres:12345@postgres:5432/kino_bot
+      - SUBSCRIPTION_CHANNELS=${SUBSCRIPTION_CHANNELS}
+      - ADMINS=${ADMINS}
+      - DEBUG=${DEBUG}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - kino_network
+
+volumes:
+  postgres_data:
+
+networks:
+  kino_network:
+    driver: bridge
