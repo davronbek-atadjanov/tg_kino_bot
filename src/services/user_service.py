@@ -35,3 +35,11 @@ class UserService:
         user = await UserService.get_or_create(session, telegram_id)
         user.is_admin = is_admin
         await session.flush()
+
+    @staticmethod   
+    async def count_users(session: AsyncSession) -> int:    
+        """Foydalanuvchilar sonini hisoblash"""
+        stmt = select(User)
+        result = await session.execute(stmt)
+        users = result.scalars().all()
+        return len(users)

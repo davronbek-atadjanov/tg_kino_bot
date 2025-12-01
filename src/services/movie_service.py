@@ -24,9 +24,17 @@ class MovieService:
         return result.scalars().all()
     
     @staticmethod
-    async def create(session: AsyncSession, code: int, url: str) -> Movie:
-        """Yangi kino qo'shish"""
-        movie = Movie(code=code, url=url)
+    async def create(session: AsyncSession, code: int, message_id: str, caption: str = None) -> Movie:
+        """
+        Yangi kino qo'shish - message identifier + caption bilan
+
+        Args:
+            session: Database session
+            code: Kino kodi (unique)
+            message_id: Telegram message identifier or file_id (string)
+            caption: Video tavsifi (optional)
+        """
+        movie = Movie(code=code, message_id=message_id, caption=caption)
         session.add(movie)
         await session.flush()
         return movie
@@ -48,3 +56,16 @@ class MovieService:
             select(Movie).where(Movie.code == code)
         )
         return result.scalar_one_or_none() is not None
+
+    @staticmethod
+    async def update(session: AsyncSession, code: int, message_id: str = None, caption: str = None) -> bool:
+        """Kino update qilish"""
+        movie = await MovieService.get_by_code(session, code)
+        if movie:
+            if message_id:
+                movie.message_id = message_id
+            if caption is not None:
+                movie.caption = caption
+            await session.flush()
+            return True
+        return False

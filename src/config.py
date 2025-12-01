@@ -3,25 +3,19 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    """Barcha konfiguratsiyalar"""
+    """Bot sozlamalari"""
     
-    # Bot sozlamalari
     BOT_TOKEN: str
-    
-    # Database
-    DATABASE_URL: str    
-
-    # Adminlar ro'yxati 
-    ADMINS: List[int] = []
-
-    SUBSCRIPTION_CHANNELS: List[int] = []
-    # Boshqa
+    DATABASE_URL: str
     DEBUG: bool = False
-
+    
+    # Adminlar - vergul bilan ajratilgan raqamlar
+    ADMINS: List[int] = []
+    
+    # Obuna kanallari - vergul bilan ajratilgan raqamlar
+    SUBSCRIPTION_CHANNELS: List[int] = []
     
     class Config:
         env_file = ".env"
-        case_sensitive = True
-
 
 settings = Settings()

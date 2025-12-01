@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery
 from aiogram.filters import Command
 from aiogram.types import Message
 from src.services.subscription_service import SubscriptionService
-from src.utils.constants import Text, get_subscribe_keyboard
+from src.utils.constants import Text, UserKeyboard
 
 router = Router()
 
@@ -26,5 +26,5 @@ async def check_subscription_handler(callback: CallbackQuery):
         await callback.answer("⛔ Siz hali kanallarga obuna bo'lmadingiz!", show_alert=True)
         await callback.message.edit_text(
             Text.SUBSCRIBE_REQUIRED,
-            reply_markup=get_subscribe_keyboard()
+            reply_markup=UserKeyboard.get_subscribe_keyboard()
         )

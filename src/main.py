@@ -3,13 +3,13 @@ Bot main fayli - Dispatcher va middleware setup
 """
 import asyncio
 import logging
-from aiogram import Dispatcher, Bot, F
+from aiogram import Dispatcher, Bot
 from aiogram.types import BotCommand
 from aiogram.fsm.storage.memory import MemoryStorage
 from src.config import settings
 from src.database.connection import init_db, close_db
 from src.middleware.subscription_check import SubscriptionCheckMiddleware
-from src.routers import admin, user, subscription
+from src.routers import admin, user, subscription, common, echo_handler
 
 # Logging setup
 logging.basicConfig(
@@ -42,8 +42,10 @@ async def main():
     
     # Routers qo'shish
     dp.include_router(subscription.router)
+    dp.include_router(common.router)
     dp.include_router(admin.router)
     dp.include_router(user.router)
+    dp.include_router(echo_handler.router)
     
     # Middleware qo'shish (admin handlers oldidan)
     dp.message.middleware(SubscriptionCheckMiddleware())
